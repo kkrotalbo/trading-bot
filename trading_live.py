@@ -54,11 +54,11 @@ RSI_EXIT_SHORT      = int(_cfg("estrategia", "rsi_exit_short",   "35"))
 SL_PCT              = float(_cfg("estrategia", "sl_pct", "0.005"))
 TP_PCT              = float(_cfg("estrategia", "tp_pct", "0.070"))
 
-DB_HOST             = _cfg("database", "host",     "localhost")
-DB_PORT             = int(_cfg("database", "port", "5432"))
-DB_NAME             = _cfg("database", "dbname",   "postgres")
-DB_USER             = _cfg("database", "user",     "postgres")
-DB_PASSWORD         = _cfg("database", "password", "") or None
+DB_HOST             = os.environ.get("DB_HOST",     cfg.get("database", "host",     fallback="localhost", raw=True))
+DB_PORT             = int(os.environ.get("DB_PORT", cfg.get("database", "port",     fallback="5432",      raw=True)))
+DB_NAME             = os.environ.get("DB_NAME",     cfg.get("database", "dbname",   fallback="postgres",  raw=True))
+DB_USER             = os.environ.get("DB_USER",     cfg.get("database", "user",     fallback="postgres",  raw=True))
+DB_PASSWORD         = os.environ.get("DB_PASSWORD", cfg.get("database", "password", fallback="",          raw=True)) or None
 
 BINANCE_URL         = "https://api.binance.com/api/v3/klines"
 TABLE               = "eth_binance_trading_1h"
