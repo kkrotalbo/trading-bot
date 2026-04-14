@@ -36,26 +36,29 @@ init(autoreset=True)
 cfg = configparser.ConfigParser()
 cfg.read("config_trading.ini")
 
-CAPITAL_INICIAL     = float(cfg["cuenta"]["capital_inicial"])
-MONTO_OP            = float(cfg["cuenta"]["monto_por_operacion"])
-LEVERAGE            = int(cfg["leverage"]["leverage"])
+def _cfg(section, key, fallback=None):
+    return os.environ.get(key.upper(), cfg.get(section, key, fallback=fallback, raw=True))
 
-SYMBOL              = cfg["estrategia"]["symbol"]
-PAR_DISPLAY         = cfg["estrategia"]["par_display"]
-TIMEFRAME           = cfg["estrategia"]["timeframe"]
-LOOKBACK            = int(cfg["estrategia"]["lookback_candles"])
-RSI_PERIODO         = int(cfg["estrategia"]["rsi_periodo"])
-RSI_LONG_MAX        = int(cfg["estrategia"]["rsi_long_max"])
-RSI_EXIT_LONG       = int(cfg["estrategia"]["rsi_exit_long"])
-RSI_EXIT_SHORT      = int(cfg["estrategia"]["rsi_exit_short"])
-SL_PCT              = float(cfg["estrategia"]["sl_pct"])
-TP_PCT              = float(cfg["estrategia"]["tp_pct"])
+CAPITAL_INICIAL     = float(_cfg("cuenta",    "capital_inicial",     "1000.0"))
+MONTO_OP            = float(_cfg("cuenta",    "monto_por_operacion", "100.0"))
+LEVERAGE            = int(_cfg("leverage",    "leverage",            "3"))
 
-DB_HOST             = cfg["database"]["host"]
-DB_PORT             = int(cfg["database"]["port"])
-DB_NAME             = cfg["database"]["dbname"]
-DB_USER             = cfg["database"]["user"]
-DB_PASSWORD         = cfg["database"]["password"] or None
+SYMBOL              = _cfg("estrategia", "symbol",           "ETHUSDT")
+PAR_DISPLAY         = _cfg("estrategia", "par_display",      "ETH/USDT")
+TIMEFRAME           = _cfg("estrategia", "timeframe",        "1h")
+LOOKBACK            = int(_cfg("estrategia", "lookback_candles", "200"))
+RSI_PERIODO         = int(_cfg("estrategia", "rsi_periodo",      "14"))
+RSI_LONG_MAX        = int(_cfg("estrategia", "rsi_long_max",     "35"))
+RSI_EXIT_LONG       = int(_cfg("estrategia", "rsi_exit_long",    "65"))
+RSI_EXIT_SHORT      = int(_cfg("estrategia", "rsi_exit_short",   "35"))
+SL_PCT              = float(_cfg("estrategia", "sl_pct", "0.005"))
+TP_PCT              = float(_cfg("estrategia", "tp_pct", "0.070"))
+
+DB_HOST             = _cfg("database", "host",     "localhost")
+DB_PORT             = int(_cfg("database", "port", "5432"))
+DB_NAME             = _cfg("database", "dbname",   "postgres")
+DB_USER             = _cfg("database", "user",     "postgres")
+DB_PASSWORD         = _cfg("database", "password", "") or None
 
 BINANCE_URL         = "https://api.binance.com/api/v3/klines"
 TABLE               = "eth_binance_trading_1h"
@@ -74,6 +77,7 @@ signal.signal(signal.SIGTERM, _stop)
 def get_conn():
     return psycopg2.connect(
         host=DB_HOST, port=DB_PORT, dbname=DB_NAME, user=DB_USER,
+        sslmode="require",
         **({} if not DB_PASSWORD else {"password": DB_PASSWORD})
     )
 
