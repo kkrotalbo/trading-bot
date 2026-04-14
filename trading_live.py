@@ -63,6 +63,8 @@ DB_PASSWORD         = os.environ.get("DB_PASSWORD", cfg.get("database", "passwor
 BINANCE_URL         = "https://api.binance.com/api/v3/klines"
 TABLE               = "eth_binance_trading_1h"
 
+print(f"[CONFIG] DB_HOST={DB_HOST} DB_PORT={DB_PORT} DB_NAME={DB_NAME} DB_USER={DB_USER}")
+
 # ── Control de ejecución ──────────────────────────────────────────────────────
 _running = True
 def _stop(sig, frame):
