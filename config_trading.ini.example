@@ -1,0 +1,25 @@
+[cuenta]
+capital_inicial      = 1000.0
+monto_por_operacion  = 100.0
+
+[leverage]
+leverage = 3
+
+[estrategia]
+symbol           = ETHUSDT
+par_display      = ETH/USDT
+timeframe        = 1h
+lookback_candles = 200
+rsi_periodo      = 14
+rsi_long_max     = 35
+rsi_exit_long    = 65
+rsi_exit_short   = 35
+sl_pct           = 0.005
+tp_pct           = 0.070
+
+[database]
+host     = localhost
+port     = 5432
+dbname   = trading
+user     = tu_usuario
+password = tu_password

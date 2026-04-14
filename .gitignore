@@ -1,0 +1,19 @@
+# Configuración con credenciales (nunca subir)
+config_trading.ini
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+*.egg-info/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
