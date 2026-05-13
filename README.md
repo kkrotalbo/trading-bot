@@ -2,6 +2,8 @@
 
 Bot de paper trading para ETH/USDT en timeframe de 1 hora. Consulta precios en Binance y registra señales de compra/venta en una base de datos PostgreSQL. No ejecuta órdenes reales.
 
+Además, cada apertura o cierre de operación envía una señal al servicio de mensajería de Telegram configurado.
+
 ## Estrategia
 
 | Señal | Condición de entrada | Condición de cierre |
@@ -49,6 +51,16 @@ python3 trading_live.py
 ```
 
 Detén el bot con `Ctrl+C`.
+
+Para probar solo el envío a Telegram sin registrar nada en la base de datos:
+
+```bash
+python3 - <<'PY'
+from trading_live import enviar_senal_telegram
+
+enviar_senal_telegram("LONG_OPEN", 2300)
+PY
+```
 
 ## Configuración
 
@@ -137,3 +149,25 @@ Las operaciones se registran en la tabla `eth_binance_trading_1h` con los siguie
 | `pnl_pct` | Ganancia/pérdida en % sobre el monto (solo en cierres) |
 | `saldo_acumulado` | Capital disponible tras la operación |
 | `razon` | Motivo del cierre (Stop Loss, Take Profit, RSI) |
+
+## Mensajería Telegram
+
+Después de insertar una operación en PostgreSQL, el bot llama al servicio `https://mensajeriatelegram-production.up.railway.app/signals`.
+
+Payload enviado:
+
+| Campo | Valor |
+|---|---|
+| `activo` | Par en formato `ETH-USDT` |
+| `accion` | `Long`, `Close_Long`, `Short` o `Close_Short` |
+| `exchange` | `Quantfury` |
+| `precio` | Mismo precio registrado en la base de datos |
+
+Mapeo de operaciones internas:
+
+| Operación BD | Acción Telegram |
+|---|---|
+| `LONG_OPEN` | `Long` |
+| `LONG_CLOSE` | `Close_Long` |
+| `SHORT_OPEN` | `Short` |
+| `SHORT_CLOSE` | `Close_Short` |

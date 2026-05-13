@@ -62,6 +62,8 @@ DB_PASSWORD         = os.environ.get("DB_PASSWORD", cfg.get("database", "passwor
 
 BINANCE_URL         = "https://api.binance.com/api/v3/klines"
 TABLE               = "eth_binance_trading_1h"
+TELEGRAM_SIGNALS_URL = "https://mensajeriatelegram-production.up.railway.app/signals"
+TELEGRAM_API_KEY    = "6c79547f4ff8bac984b243491b51d6b56946ea40e4d0a44753fe2d8705d0ae05"
 
 
 # ── Control de ejecución ──────────────────────────────────────────────────────
@@ -139,6 +141,39 @@ def insert_operacion(conn, fecha: datetime, operacion: str, precio: float,
             str(razon),
         ))
     conn.commit()
+    enviar_senal_telegram(operacion, precio)
+
+
+def enviar_senal_telegram(operacion: str, precio: float):
+    acciones = {
+        "LONG_OPEN": "Long",
+        "LONG_CLOSE": "Close_Long",
+        "SHORT_OPEN": "Short",
+        "SHORT_CLOSE": "Close_Short",
+    }
+    accion = acciones.get(operacion)
+    if not accion:
+        return
+
+    payload = {
+        "activo": PAR_DISPLAY.replace("/", "-"),
+        "accion": accion,
+        "exchange": "Quantfury",
+        "precio": float(precio),
+    }
+    try:
+        resp = requests.post(
+            TELEGRAM_SIGNALS_URL,
+            headers={
+                "Content-Type": "application/json",
+                "x-api-key": TELEGRAM_API_KEY,
+            },
+            json=payload,
+            timeout=10,
+        )
+        resp.raise_for_status()
+    except Exception as e:
+        log(f"[Telegram] Error enviando señal: {e}", Fore.RED)
 
 
 # ── Binance ───────────────────────────────────────────────────────────────────
