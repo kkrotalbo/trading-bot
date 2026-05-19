@@ -152,7 +152,7 @@ Las operaciones se registran en la tabla `eth_binance_trading_1h` con los siguie
 
 ## Mensajería Telegram
 
-Después de insertar una operación en PostgreSQL, el bot llama al servicio `https://mensajeriatelegram-production.up.railway.app/signals`.
+Después de insertar una operación en PostgreSQL, el bot llama al servicio configurado en la variable de entorno `TELEGRAM_SIGNALS_URL`.
 
 Payload enviado:
 

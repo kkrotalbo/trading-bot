@@ -62,8 +62,8 @@ DB_PASSWORD         = os.environ.get("DB_PASSWORD", cfg.get("database", "passwor
 
 BINANCE_URL         = "https://api.binance.com/api/v3/klines"
 TABLE               = "eth_binance_trading_1h"
-TELEGRAM_SIGNALS_URL = "https://mensajeriatelegram-production.up.railway.app/signals"
-TELEGRAM_API_KEY    = "6c79547f4ff8bac984b243491b51d6b56946ea40e4d0a44753fe2d8705d0ae05"
+TELEGRAM_SIGNALS_URL = os.environ.get("TELEGRAM_SIGNALS_URL")
+TELEGRAM_API_KEY    = os.environ.get("TELEGRAM_API_KEY")
 
 
 # ── Control de ejecución ──────────────────────────────────────────────────────
